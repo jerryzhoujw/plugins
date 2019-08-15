@@ -168,12 +168,13 @@ class SharedPreferences {
         await _kChannel.invokeMapMethod<String, Object>('getAll');
     assert(fromSystem != null);
     // Strip the flutter. prefix from the returned preferences.
-    final Map<String, Object> preferencesMap = <String, Object>{};
-    for (String key in fromSystem.keys) {
-      // assert(key.startsWith(_prefix));
-      preferencesMap[key.substring(_prefix.length)] = fromSystem[key];
-    }
-    return preferencesMap;
+    // final Map<String, Object> preferencesMap = <String, Object>{};
+    // for (String key in fromSystem.keys) {
+    //   // assert(key.startsWith(_prefix));
+    //   preferencesMap[key.substring(_prefix.length)] = fromSystem[key];
+    // }
+    // return preferencesMap;
+    return fromSystem;
   }
 
   /// Initializes the shared preferences with mock values for testing.
