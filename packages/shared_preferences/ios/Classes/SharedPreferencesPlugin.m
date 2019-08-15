@@ -69,9 +69,9 @@ static NSString *const CHANNEL_NAME = @"plugins.flutter.io/shared_preferences";
 #pragma mark - Private
 
 static NSMutableDictionary *getAllPrefs() {
-  NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
+  // NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
   NSUserDefaults *currentDefault = [[NSUserDefaults alloc] initWithSuiteName:@"group.com.jerryzhoujw.roboNews"];
-  NSDictionary *prefs = [currentDefault persistentDomainForName:appDomain];
+  NSDictionary *prefs = [currentDefault persistentDomainForName:@"group.com.jerryzhoujw.roboNews"];
   NSMutableDictionary *filteredPrefs = [NSMutableDictionary dictionary];
   if (prefs != nil) {
     for (NSString *candidateKey in prefs) {
