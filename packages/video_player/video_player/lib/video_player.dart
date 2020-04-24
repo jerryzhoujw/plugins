@@ -38,6 +38,7 @@ class VideoPlayerValue {
     this.isBuffering = false,
     this.volume = 1.0,
     this.errorDescription,
+    this.speed = 1.0,
   });
 
   /// Returns an instance with a `null` [Duration].
@@ -87,6 +88,9 @@ class VideoPlayerValue {
   /// Is null when [initialized] is false.
   final Size size;
 
+  ///The Current speed of the playback.
+  final double speed;
+
   /// Indicates whether or not the video has been loaded and is ready to play.
   bool get initialized => duration != null;
 
@@ -120,6 +124,7 @@ class VideoPlayerValue {
     bool isBuffering,
     double volume,
     String errorDescription,
+    double speed,
   }) {
     return VideoPlayerValue(
       duration: duration ?? this.duration,
@@ -131,6 +136,7 @@ class VideoPlayerValue {
       isLooping: isLooping ?? this.isLooping,
       isBuffering: isBuffering ?? this.isBuffering,
       volume: volume ?? this.volume,
+      speed: speed ?? this.speed,
       errorDescription: errorDescription ?? this.errorDescription,
     );
   }
@@ -147,7 +153,8 @@ class VideoPlayerValue {
         'isLooping: $isLooping, '
         'isBuffering: $isBuffering'
         'volume: $volume, '
-        'errorDescription: $errorDescription)';
+        'errorDescription: $errorDescription'
+        'speed: $speed)';
   }
 }
 
@@ -281,6 +288,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           _applyLooping();
           _applyVolume();
           _applyPlayPause();
+          _applySpeed();
           break;
         case VideoEventType.completed:
           value = value.copyWith(isPlaying: false, position: value.duration);
@@ -387,6 +395,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           _updatePosition(newPosition);
         },
       );
+      // Ensure the video is played at the correct speed
+      await _applySpeed();
     } else {
       _timer?.cancel();
       await _videoPlayerPlatform.pause(_textureId);
@@ -398,6 +408,34 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       return;
     }
     await _videoPlayerPlatform.setVolume(_textureId, value.volume);
+  }
+
+  Future<void> _applySpeed() async {
+    if (!value.initialized || _isDisposed) {
+      return;
+    }
+
+    // On iOS setting the speed on an AVPlayer starts playing
+    // the video straightaway. We avoid this surprising behaviour
+    // by not changing the speed of the player until after the video
+    // starts playing
+    if (!value.isPlaying) {
+      return;
+    }
+
+    await _videoPlayerPlatform.setSpeed(_textureId, value.speed);
+  }
+
+  /// Sets the playback speed of [this].
+  ///
+  /// [speed] can be 0.5x, 1x, 2x
+  /// by default speed value is 1.0
+  ///
+  /// Negative speeds are not supported
+  /// speeds above 2x are not supported on iOS
+  Future<void> setSpeed(double speed) async {
+    value = value.copyWith(speed: speed);
+    await _applySpeed();
   }
 
   /// The position in the current video.
