@@ -3,7 +3,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'video_player'
-  s.version          = '0.0.1'
+  s.version          = '0.0.2'
   s.summary          = 'Flutter Video Player'
   s.description      = <<-DESC
 A Flutter plugin for playing back video on a Widget surface.
