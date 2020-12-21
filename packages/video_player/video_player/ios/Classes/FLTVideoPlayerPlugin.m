@@ -295,6 +295,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     return;
   }
   if (_isPlaying) {
+    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
     [_player play];
     _player.rate = _speed;
     [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
