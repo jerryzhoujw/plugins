@@ -1,3 +1,7 @@
+## 0.10.11+5
+
+* rever video dim feature
+
 ## 0.10.9+1
 
 * Readme updated to include web support and details on how to use for web
